@@ -1,3 +1,241 @@
+/*Question 1 : Explain the fundamental differences between DDL, DML, and DQL
+commands in SQL. Provide one example for each type of command.
+Ans: 
+DDL - Data definition language - Defines and manages the structure of database objects like tables, schemas and indexes. 
+create drop alter truncate
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    age INT
+    
+DML- data Manupulation language- Handles data stored in tables 
+insert delete update
+eg . INSERT INTO students (student_id, name, age)
+VALUES (1, 'Amit', 20);
+ 
+ DQL- Data Query language- Retrieves data from the database without modifying it
+ select
+eg. SELECT name, age FROM students WHERE age > 18;*/
+
+/*Question 2 : What is the purpose of SQL constraints? Name and describe three common types
+of constraints, providing a simple scenario where each would be useful.	
+ Ans: 
+ SQL constraints are rules applied to table columns to enforce data integrity, consistency and accuracy within a database. 
+ They ensure that only valid data is stored and help maintain relationships between tables.
+Purpose of SQL Constraints
+- Prevent invalid or duplicate data
+- Enforce business rules at the database level
+- Maintain referential integrity between related tables
+- Reduce the need for manual data validation in applications
+There are three types of constraints
+Primary Key -  Ensures each row in a table has a unique identifier. Only one per table.
+In a students table, student_id is a primary key to uniquely identify each student.
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(50)
+);
+
+Unique -  Ensures all values in a column are different.
+In a users table, the email column must be unique so no two users can register with the same email.
+CREATE TABLE users (
+    user_id INT PRIMARY KEY,
+    email VARCHAR(100) UNIQUE
+);
+
+Foreign Key - Enforces a link between two tables by referencing a primary key in another table.
+In an orders table, customer_id is a foreign key referencing the customers table to ensure orders are only placed by existing customers.
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);*/
+
+/*Question 3 :Explain the difference between LIMIT and OFFSET clauses in SQL. How
+would you use them together to retrieve the third page of results, assuming each page
+has 10 records?
+LIMIT clause:- Specifies the maximum number of records to return.
+OFFSET clause:- Skips a specified number of rows before starting to return results.
+SELECT * FROM your_table
+LIMIT 10 OFFSET 20;
+This returns page 3, assuming:
+• 	Each page has 10 records
+• 	Page 1 → OFFSET 0
+• 	Page 2 → OFFSET 10
+• 	Page 3 → OFFSET 20
+OFFSET = (page_number - 1) * records_per_page
+OFFSET = (3 - 1) * 10 = 20 */
+
+/* Question 4 : What is a Common Table Expression (CTE) in SQL, and what are its main
+benefits? Provide a simple SQL example demonstrating its usage.
+Ans:
+A Common Table Expression (CTE) in SQL is a temporary result set that you can reference within a select, insert, update or delete  statement. 
+It improves readability and modularity of complex queries, especially when dealing with subqueries or recursive logic.
+Main Benefits of CTEs
+• 	Improves readability: Makes complex queries easier to understand and maintain.
+• 	Supports recursion: Useful for hierarchical or tree-structured data.
+• 	Reusable logic: Can be referenced multiple times within the same query.
+• 	Scoped execution: Exists only during the execution of the query.
+WITH AverageSalary AS (
+    SELECT AVG(salary) AS avg_salary
+    FROM employees
+)
+SELECT name, salary
+FROM employees, AverageSalary
+WHERE employees.salary > AverageSalary.avg_salary;
+Explanation:
+• 	The  clause defines a CTE named Average salary.
+• 	It calculates the average salary from the  Employee table.
+• 	The main query then selects employees whose salary is above that average.*/
+
+
+/* Question 5 : Describe the concept of SQL Normalization and its primary goals. Briefly
+explain the first three normal forms (1NF, 2NF, 3NF).
+Ans:
+SQL Normalization is a process used to organize data in a relational database to reduce redundancy and improve data integrity. 
+It involves structuring tables and relationships so that data is stored efficiently and consistently.
+It Eliminate redundant data (e.g., storing the same data in multiple places)
+Ensures data dependencies make sense (i.e., data is logically stored)
+Improves data integrity and consistency
+Simplifies maintenance and updates
+First Normal Form (1NF)
+- Rule: Each column must contain atomic (indivisible) values, and each record must be unique.
+- Example Violation: A column storing multiple phone numbers like '123-456, 789-012'
+- Fix: Split into separate rows or create a related table for phone numbers.
+Second Normal Form (2NF)
+- Rule: Must be in 1NF, and all non-key attributes must be fully dependent on the entire primary key.
+- Example Violation: In a table with a composite key (student_id, course_id), storing student_name violates 2NF because it's only dependent on student_id.
+- Fix: Move student_name to a separate students table.
+Third Normal Form (3NF)
+- Rule: Must be in 2NF, and all attributes must be directly dependent on the primary key — no transitive dependencies.
+- Example Violation: A table with student_id, department_id, and department_name — department_name depends on department_id, not student_id.
+- Fix: Move department_id and department_name to a separate departments table.*/
+
+/*Question 6 : Create a database named ECommerceDB and perform the following
+tasks:
+
+1. Create the following tables with appropriate data types and constraints:
+● Categories
+○ CategoryID (INT, PRIMARY KEY)
+○ CategoryName (VARCHAR(50), NOT NULL, UNIQUE)
+
+● Products
+○ ProductID (INT, PRIMARY KEY)
+○ ProductName (VARCHAR(100), NOT NULL, UNIQUE)
+○ CategoryID (INT, FOREIGN KEY → Categories)
+○ Price (DECIMAL(10,2), NOT NULL)
+○ StockQuantity (INT)
+● Customers
+○ CustomerID (INT, PRIMARY KEY)
+○ CustomerName (VARCHAR(100), NOT NULL)
+○ Email (VARCHAR(100), UNIQUE)
+○ JoinDate (DATE)
+● Orders
+○ OrderID (INT, PRIMARY KEY)
+○ CustomerID (INT, FOREIGN KEY → Customers)
+○ OrderDate (DATE, NOT NULL)
+○ TotalAmount (DECIMAL(10,2))
+
+2. Insert the following records into each table
+● Categories
+CategoryID Category Name
+1 Electronics
+2 Books
+3 Home Goods
+4 Apparel
+
+Products
+ProductID ProductName CategoryID Price StockQuantity
+ProductID ProductName CategoryID Price StockQuantity
+101 Laptop Pro 1 1200.00 50
+102 SQL
+Handbook
+2 45.50 200
+103 Smart Speaker 1 99.99 150
+104 Coffee Maker 3 75.00 80
+105 Novel : The
+Great SQL
+2 25.00 120
+106 Wireless
+Earbuds
+1 150.00 100
+107 Blender X 3 120.00 60
+108 T-Shirt Casual 4 20.00 300
+
+Customers
+CustomerID CustomerName Email Joining Date
+1 Alice Wonderland alice@example.com 2023-01-10
+2 Bob the Builder bob@example.com 2022-11-25
+3 Charlie Chaplin charlie@example.com 2023-03-01
+4 Diana Prince diana@example.com 2021-04-26 
+
+Orders
+OrderID CustomerID OrderDate TotalAmount
+1001 1 2023-04-26 1245.50
+1002 2 2023-10-12 99.99
+1003 1 2023-07-01 145.00
+1004 3 2023-01-14 150.00
+1005 2 2023-09-24 120.00
+1006 1 2023-06-19 20.00
+
+*/
+
+create database ECommerceDB;
+show databases;
+use ECommerceDB;
+create table Categories (
+CategoryID INT PRIMARY KEY, 
+CategoryName VARCHAR(50) NOT NULL UNIQUE);
+
+create table Products (
+ProductID INT PRIMARY KEY, 
+ProductName VARCHAR(100) NOT NULL UNIQUE, 
+CategoryID INT,
+Price DECIMAL(10,2) NOT NULL, 
+StockQuantity INT,
+foreign key (CategoryID) references Categories( CategoryID));
+
+create table Customers(
+CustomerID INT PRIMARY KEY,
+CustomerName VARCHAR(100) NOT NULL, 
+Email VARCHAR(100) UNIQUE, 
+JoinDate DATE);
+
+create table orders(OrderID INT PRIMARY KEY, CustomerID INT, OrderDate DATE NOT NULL, TotalAmount DECIMAL(10,2),
+foreign key(customerID) references customers(customerID)
+);
+
+insert into Categories(CategoryID , CategoryName)
+values(1, 'Electronics'),
+(2, 'Books'),
+(3, 'Home Goods'),
+(4, 'Apparel');
+
+insert into Products(ProductID,ProductName, CategoryID, Price, StockQuantity)
+values(101, 'Laptop Pro', 1, 1200.00, 50),
+(102, 'SQL Handbook',2, 45.50, 200),
+(103, 'Smart Speaker', 1, 99.99, 150),
+(104, 'Coffee Maker', 3, 75.00, 80),
+(105, 'Novel : The Great SQL', 2, 25.00, 120),
+(106, 'Wireless Earbuds', 1, 150.00, 100),
+(107, 'Blender X', 3, 120.00, 60),
+(108, 'T-Shirt Casual', 4, 20.00, 300); 
+
+insert into customers( CustomerID , CustomerName, Email, JoinDate)
+values(1, 'Alice Wonderland',  'alice@example.com', '2023-01-10'),
+(2, 'Bob the Builder', 'bob@example.com', '2022-11-25'),
+(3, 'Charlie Chaplin', 'charlie@example.com','2023-03-01'),
+(4, 'Diana Prince', 'diana@example.com', '2021-04-26');
+
+insert into orders (OrderID, CustomerID, OrderDate, TotalAmount)
+values(1001, 1, '2023-04-26', 1245.50),
+(1002, 2, '2023-10-12', 99.99),
+(1003, 1, '2023-07-01', 145.00),
+(1004, 3, '2023-01-14', 150.00),
+(1005, 2, '2023-09-24', 120.00),
+(1006, 1, '2023-06-19', 20.00);
+show tables;
+
+
 /*1. Create a table called employees with the following structure?
 : emp_id (integer, should not be NULL and should be a primary key)Q
 : emp_name (text, should not be NULL)Q
@@ -13,7 +251,27 @@ age int check(age >= 18),
 email varchar(50) unique,
 salary float 
  );
- 
+
+/*Question 7 : Generate a report showing CustomerName, Email, and the
+TotalNumberofOrders for each customer. Include customers who have not placed
+any orders, in which case their TotalNumberofOrders should be 0. Order the results
+by CustomerName.*/
+SELECT c.CustomerName, c.Email, COUNT(o.OrderID) AS TotalNumberOfOrders
+FROM Customers c
+LEFT JOIN Orders o ON c.CustomerID = o.CustomerID
+GROUP BY c.CustomerID, c.CustomerName, c.Email;
+
+/*Question 8 : Retrieve Product Information with Category: Write a SQL query to
+display the ProductName, Price, StockQuantity, and CategoryName for all
+products. Order the results by CategoryName and then ProductName alphabetically.
+*/
+
+ SELECT p.ProductName, p.Price, p.StockQuantity, c.CategoryName
+FROM Products p
+INNER JOIN Categories c ON p.CategoryID = c.CategoryID
+ORDER BY c.CategoryName, p.ProductName;
+
+
 
 /*2.Explain the purpose of constraints and how they help maintain data integrity in a database. 
 
